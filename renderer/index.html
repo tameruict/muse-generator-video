@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; media-src file: 'self'; img-src file: data: 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+<title>Muse Studio</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<aside id="nav">
+  <div class="logo"><svg viewBox="0 0 40 40" class=""><path d="M5 31C8 14 11 9 14 16c2.5 5.5 4 8 7 0 2.5-6.5 5-9 8-3 2 4 2.5 11 6 18" fill="none" stroke="#0064e0" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div>Muse Studio<small data-i18n="nav.tagline">Render video AI hàng loạt</small></div></div>
+  <button data-view="home" class="on"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span data-i18n="nav.home">Trang chủ</span></button>
+  <div class="navgrp" data-i18n="nav.grpCreate">Tạo video</div>
+  <button data-view="script"><svg class="ic" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><span data-i18n="nav.script">Kịch bản</span><span class="nbadge" id="nb-script"></span></button>
+  <button data-view="studio"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l10 5-10 5L2 7z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span data-i18n="nav.studio">Studio kênh</span></button>
+  <button data-view="film"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 8h4M3 12h18M3 16h4M17 8h4M17 16h4"/></svg><span data-i18n="nav.film">Làm phim</span></button>
+  <button data-view="aff"><svg class="ic" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span data-i18n="nav.aff">Video Aff</span></button>
+  <div class="navgrp" data-i18n="nav.grpManage">Quản lý</div>
+  <button data-view="library"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span data-i18n="nav.library">Kho video</span></button>
+  <button data-view="sync"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span data-i18n="nav.sync">Nhân vật &amp; phong cách</span></button>
+  <button data-view="codex"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.8-.9L3 21l2-5.2A8.4 8.4 0 1 1 21 11.5z"/></svg><span data-i18n="nav.codex">Trợ lý AI</span></button>
+  <div class="navgrp" data-i18n="nav.grpSystem">Hệ thống</div>
+  <button data-view="accounts"><svg class="ic" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span data-i18n="nav.accounts">Tài khoản</span><span class="nbadge" id="nb-accounts"></span></button>
+  <button data-view="settings"><svg class="ic" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span data-i18n="nav.settings">Cài đặt</span></button>
+  <button data-view="guide"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg><span data-i18n="nav.guide">Hướng dẫn</span></button>
+  <div class="navfoot">v4.3 · Muse Studio</div>
+</aside>
+<main>
+<header id="top">
+  <select id="projSel"></select>
+  <span id="accPill" class="pill"></span><span class="grow"></span>
+  <select id="langSel" title="Language / Ngôn ngữ / 语言" data-i18n-title="top.langTitle"><option value="vi">🇻🇳 Tiếng Việt</option><option value="en">🇬🇧 English</option><option value="zh">🇨🇳 中文</option></select>
+  <button id="btnTheme" class="ghost" title="Đổi giao diện sáng / tối" data-i18n-title="top.themeTitle">🌓</button><button id="btnResume" class="primary" data-i18n="top.resume">▶ Chạy tiếp</button><button id="btnStopAll" class="dangero" data-i18n="top.stopAll">Dừng tất cả</button><button id="btnOutDir" class="ghost" data-i18n="top.outDir">📁 Thư mục video</button>
+</header>
+<div id="notice" hidden></div>
+
+
+<section id="v-home" class="view on">
+ <div class="hero"><div>
+  <h1 data-i18n-html="home.heroTitle">Tạo video AI <em>hàng loạt</em>,<br>chỉ với một ý tưởng.</h1>
+  <p data-i18n="home.heroDesc">Viết kịch bản (hoặc chỉ cần một ý tưởng), thêm vào hàng đợi, và để Muse Studio tự render, nối cảnh, đổi tài khoản khi hết hạn mức và ghép thành video hoàn chỉnh.</p>
+  <div class="cta"><button class="big ghost" data-go="script" data-i18n="home.ctaScript">Soạn kịch bản chi tiết</button><button class="big ghost" data-go="guide" data-i18n="home.ctaGuide">Xem hướng dẫn</button></div>
+ </div><svg viewBox="0 0 40 40" class="mark"><path d="M5 31C8 14 11 9 14 16c2.5 5.5 4 8 7 0 2.5-6.5 5-9 8-3 2 4 2.5 11 6 18" fill="none" stroke="#0064e0" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+ <div class="card pad" id="quick">
+  <div class="row"><h3 class="grow" data-i18n="home.quick.title">⚡ Tạo nhanh</h3><small data-i18n="home.quick.sub">Gõ ý tưởng, bấm một nút: app tự viết kịch bản, chia cảnh, render song song nhiều tài khoản và ghép video.</small></div>
+  <textarea id="qkIdea" rows="3" placeholder="VD: Cô gái pha cà phê buổi sáng trong căn bếp ấm áp, nắng chiếu qua cửa sổ, cận cảnh hơi nước bốc lên..." data-i18n-ph="home.quick.ideaPh" style="margin-top:8px"></textarea>
+  <div class="qrow">
+   <label><span data-i18n="home.quick.dur">Thời lượng</span><select id="qkDur"><option value="10" data-i18n="common.sec10">10 giây</option><option value="20" data-i18n="common.sec20">20 giây</option><option value="30" selected data-i18n="common.sec30">30 giây</option><option value="40" data-i18n="common.sec40">40 giây</option><option value="60" data-i18n="common.sec60">60 giây</option></select></label>
+   <label><span data-i18n="home.quick.ratio">Tỉ lệ</span><select id="qkRatio"><option>9:16</option><option>16:9</option><option>1:1</option><option>3:4</option></select></label>
+   <label><span data-i18n="home.quick.copies">Số video</span><input id="qkCopies" type="number" min="1" max="10" value="1"></label>
+   <label><span data-i18n="home.quick.voice">Lồng tiếng</span><select id="qkVoice"><option value="none" data-i18n="voice.noneShort">Không</option><option value="vi" data-i18n="voice.vi">Tiếng Việt</option><option value="en" data-i18n="voice.en">Tiếng Anh</option><option value="zh" data-i18n="voice.zh">Tiếng Trung</option></select></label>
+   <div class="qimg"><button id="qkPick" type="button" class="ghost" data-i18n="home.quick.pickImg">🖼 Ảnh tham chiếu</button><small id="qkImgN" data-i18n="home.quick.noImg">không có ảnh</small></div>
+  </div>
+  <div class="picks" id="qkChars" style="margin-top:8px"></div>
+  <div class="row" style="margin-top:10px"><div class="est grow" id="qkEst" data-i18n="home.quick.estIdle">Nhập ý tưởng để xem ước tính.</div><button id="qkGo" class="primary big" data-i18n="home.quick.go">⚡ Tạo &amp; render ngay</button></div>
+ </div>
+ <div class="two">
+  <div class="card pad"><div class="row"><h3 class="grow" data-i18n="home.lanes.title">Luồng tài khoản</h3><span id="homeEta" class="pill"></span></div><p class="hint" data-i18n="home.lanes.hint">Mỗi tài khoản render 1 clip một lúc; app tự chia việc và chuyển sang tài khoản khác khi một tài khoản hết hạn mức hoặc lỗi.</p><div id="homeLanes" class="lanes"></div>
+   <div class="row" style="margin-top:10px"><button id="homeCheck" class="ghost" data-i18n="home.lanes.check">Kiểm tra phiên đăng nhập</button><span class="grow"></span><button id="homeStart" class="primary" data-i18n="top.resume">▶ Chạy tiếp</button><button id="homeStop" class="dangero" data-i18n="common.stop">Dừng</button></div></div>
+  <div class="card pad"><h3 data-i18n="home.queue.title">Đang xử lý</h3><p class="hint" id="homeQHint"></p><div id="homeQueue" class="hq"></div></div>
+ </div>
+ <div class="stats" id="homeStats"></div>
+ <div class="two">
+  <div class="card pad"><h3 data-i18n="home.steps.title">Bắt đầu trong 5 phút</h3><p class="hint" data-i18n="home.steps.hint">Các bước tự đánh dấu khi bạn hoàn thành.</p><div class="steps" id="homeSteps"></div></div>
+  <div class="card pad"><h3 data-i18n="home.recent.title">Video gần đây</h3><p class="hint" id="homeRecentHint"></p><div class="recent" id="homeRecent"></div></div>
+ </div>
+ <div class="quick">
+  <div class="card qk" data-go="script"><svg class="ic" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><b data-i18n="home.cards.scriptTitle">Kịch bản</b><small data-i18n="home.cards.scriptDesc">Dán kịch bản hoặc để AI chia cảnh. Hỗ trợ thẻ [Tên nhân vật].</small></div>
+  <div class="card qk" data-go="studio"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l10 5-10 5L2 7z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg><b data-i18n="home.cards.studioTitle">Studio kênh</b><small data-i18n="home.cards.studioDesc">Làm đủ N tập mỗi ngày cho một kênh, có giọng đọc và phụ đề.</small></div>
+  <div class="card qk" data-go="film"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 8h4M3 12h18M3 16h4M17 8h4M17 16h4"/></svg><b data-i18n="home.cards.filmTitle">Làm phim</b><small data-i18n="home.cards.filmDesc">AI viết cốt truyện nhiều đợt để phim liền mạch.</small></div>
+  <div class="card qk" data-go="aff"><svg class="ic" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><b data-i18n="home.cards.affTitle">Video Aff</b><small data-i18n="home.cards.affDesc">Kịch bản bán hàng + caption + hashtag cho TikTok / Reels.</small></div>
+  <div class="card qk" data-go="codex"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.8-.9L3 21l2-5.2A8.4 8.4 0 1 1 21 11.5z"/></svg><b data-i18n="home.cards.codexTitle">Trợ lý AI</b><small data-i18n="home.cards.codexDesc">Viết prompt, ý tưởng, caption ngay trong app.</small></div>
+ </div>
+</section>
+<section id="v-script" class="view"><div class="pagehead"><h1 data-i18n="script.title">Tạo video từ kịch bản</h1><p data-i18n="script.sub">Viết mỗi dòng một cảnh (≈10 giây), hoặc chọn "Từ ảnh" để mỗi ảnh ra một video. Thêm vào hàng đợi rồi bấm Bắt đầu render.</p></div>
+ <div class="card composer">
+  <div class="cl">
+    <div class="tabs"><button class="tab on" data-mode="script" data-i18n="script.tabScript">Kịch bản</button><button class="tab" data-mode="image" data-i18n="script.tabImage">Từ ảnh</button></div>
+    <textarea id="script" placeholder="VD:&#10;0-10s: Cô gái Việt mở hộp gà giữa kho hàng, cận cảnh đèn Noel&#10;10-20s: Cả gia đình quây quần mở quà hộp lịch Giáng Sinh&#10;(Mỗi 10 giây = 1 cảnh. Chế độ 'Từ ảnh': để trống để AI tự nghĩ.)&#10;Nhiều nhân vật: ghi [Bắp, Mẹ] ở đầu dòng để chỉ rõ ai có mặt trong cảnh đó; không ghi thì app tự nhận theo tên trong câu." data-i18n-ph="script.placeholder"></textarea>
+    <div class="chips" id="tplChips"><small data-i18n="script.tplLabel">Chèn mẫu:</small></div>
+    <div class="refbox"><div class="grow"><b id="imgCount" data-i18n="common.zeroImages">0 ảnh</b><br><small data-i18n="script.refHint">Chế độ "Từ ảnh": mỗi ảnh ra 1 video riêng. Chế độ "Kịch bản": ảnh là tham chiếu sản phẩm.</small></div>
+      <button id="btnPickImg" data-i18n="common.pickImages">Chọn ảnh</button><button id="btnClearImg" class="dangero" data-i18n="common.clearImages">Bỏ hết ảnh</button></div>
+    <div id="thumbs"></div>
+  </div>
+  <div class="cr">
+    <label><span data-i18n="script.ratio">Tỉ lệ</span><select id="ratio"><option>9:16</option><option>16:9</option><option>1:1</option><option>3:4</option></select></label>
+    <label><span data-i18n="script.duration">Thời lượng</span><select id="duration" data-custom data-ph="vd: 75 giây, 1:30, 2 phút" data-i18n-ph="script.durPh"><option value="10" data-i18n="script.dur10">10 giây (1 cảnh)</option><option value="20" data-i18n="script.dur20">20 giây (2 cảnh)</option><option value="30" selected data-i18n="script.dur30">30 giây (3 cảnh)</option><option value="40" data-i18n="script.dur40">40 giây (4 cảnh)</option><option value="60" data-i18n="script.dur60">60 giây (6 cảnh)</option><option value="auto" data-i18n="script.durAuto">Theo số dòng kịch bản</option></select></label>
+    <label><span data-i18n="script.voice">Giọng đọc</span><select id="voice" data-custom data-ph="vd: Tiếng Thái, Japanese" data-i18n-ph="script.voicePh"><option value="none" data-i18n="voice.none">Không lồng tiếng</option><option value="vi" data-i18n="voice.vi">Tiếng Việt</option><option value="en" data-i18n="voice.en">Tiếng Anh</option><option value="ja" data-i18n="voice.ja">Tiếng Nhật</option><option value="ko" data-i18n="voice.ko">Tiếng Hàn</option><option value="zh" data-i18n="voice.zh">Tiếng Trung</option><option value="th" data-i18n="voice.th">Tiếng Thái</option><option value="fr" data-i18n="voice.fr">Tiếng Pháp</option><option value="es" data-i18n="voice.es">Tiếng Tây Ban Nha</option></select></label>
+    <label><span data-i18n="script.style">Phong cách / ý tưởng</span><select id="styleSel"></select></label>
+    <div class="wide"><small data-i18n="script.charsHint">Nhân vật (đồng bộ ngoại hình xuyên suốt):</small><div id="charPick" class="picks"></div></div>
+    <details class="wide adv"><summary data-i18n="script.advTitle">⚙ Tuỳ chọn nâng cao</summary><div class="cr advg">
+      <label><span data-i18n="script.prefixLabel">Tiền tố câu lệnh</span><input id="prefix" value="Tạo video chân thực:"></label>
+      <label><span data-i18n="script.projectLabel">Dự án</span><input id="project" list="projList" placeholder="vd: KOREAN BBQ" data-i18n-ph="script.projectPh"><datalist id="projList"></datalist></label>
+      <label><span data-i18n="script.copiesLabel">Số bản / video</span><input id="copies" type="number" min="1" max="10" value="1"></label>
+      <label><span data-i18n="script.parallelLabel">Chế độ chạy song song</span><select id="parallel"><option value="" data-i18n="script.parDefault">Theo Cài đặt (khuyên dùng)</option><option value="auto" data-i18n="script.parAuto">Tự động: ngắn liền mạch, dài tự chia chương song song</option><option value="smart" data-i18n="script.parSmart">Thông minh: chia nhóm cảnh chạy song song</option><option value="strict" data-i18n="script.parStrict">Liền mạch tuyệt đối: tuần tự</option><option value="fast" data-i18n="script.parFast">Nhanh nhất: mọi cảnh song song</option></select></label>
+      <div class="chk"><label><input type="checkbox" id="continuity" checked> <span data-i18n="script.continuity">Nối liền mạch giữa các cảnh (lấy khung cuối cảnh trước)</span></label>
+        <label><input type="checkbox" id="useAI" checked> <span data-i18n="script.useAI">Dùng Muse viết/chia cảnh khi thiếu</span></label>
+        <label><input type="checkbox" id="useMusic"> <span data-i18n="script.useMusic">Ghép nhạc nền</span> <button id="btnMusic" type="button" data-i18n="common.pickFile">Chọn file</button> <small id="musicName"></small></label></div>
+    </div></details>
+    <div class="chk"><label><input type="checkbox" id="autoStart" checked> <span data-i18n="script.autoStart">Tự bắt đầu render ngay sau khi thêm</span></label></div>
+    <div class="est wide" id="estBox" data-i18n="script.estIdle">Nhập kịch bản để xem ước tính.</div>
+    <button id="btnAdd" class="primary wide big" data-i18n="script.addBtn">Đưa vào hàng đợi</button>
+  </div>
+ </div>
+ <div class="qwrap">
+  <div class="filters" id="filters"></div>
+  <div class="split">
+   <div class="card list"><div class="lh"><span></span><span>#</span><span data-i18n="script.colVideo">Video</span><span data-i18n="script.colStatus">Trạng thái</span><span data-i18n="script.colActions">Thao tác</span></div><div id="queue"></div></div>
+   <div class="card preview"><div class="ph"><b data-i18n="preview.title">Xem trước &amp; chi tiết</b><span id="pStatus" class="chip"></span></div><div class="pv"><video id="player" controls></video></div><div id="pInfo"></div></div>
+  </div>
+ </div>
+ <footer id="bar"><button id="bAll" data-i18n="queue.selectAll">Chọn tất cả</button><button id="bNone" data-i18n="queue.deselectAll">Bỏ chọn</button><button id="bDel" class="dangero" data-i18n="queue.delSelectedInit">Xoá đã chọn (0)</button><button id="bRetryAll" data-i18n="queue.retryAll">↻ Thử lại tất cả lỗi</button><button id="bClear" class="dangero" data-i18n="queue.clearDone">Xoá video đã xong</button>
+   <span class="grow"></span><span id="bSum"></span><button id="bStop" data-i18n="common.stop">Dừng</button><button id="bStart" class="primary" data-i18n="queue.startRender">▶ Bắt đầu render</button></footer>
+</section>
+
+<section id="v-library" class="view"><div class="pagehead"><h1 data-i18n="library.title">Kho video</h1><p data-i18n="library.sub">Tất cả video đã hoàn thành. Tìm theo tên, nhãn hoặc ghi chú.</p></div><div class="card pad"><div class="row"><input id="libQ" placeholder="Tìm theo tên, nhãn, ghi chú..." data-i18n-ph="library.searchPh" class="grow"><span id="libCount"></span></div></div><div id="libGrid" class="grid"></div></section>
+
+<section id="v-sync" class="view"><div class="pagehead"><h1 data-i18n="sync.title">Nhân vật &amp; phong cách</h1><p data-i18n="sync.sub">Lưu một lần, dùng cho mọi video để ngoại hình và không khí hình ảnh nhất quán.</p></div><div class="two">
+ <div class="card pad"><h3 data-i18n="sync.charTitle">🧍 Nhân vật đồng bộ</h3><p class="hint" data-i18n="sync.charHint">Ảnh tham chiếu + mô tả cố định được chèn vào MỌI cảnh để nhân vật giống nhau từ đầu đến cuối.</p>
+  <input id="chName" placeholder="Tên nhân vật (vd: Lan)" data-i18n-ph="sync.charNamePh"><textarea id="chDesc" placeholder="Mô tả cố định: tuổi, khuôn mặt, tóc, trang phục... (tiếng Anh cho chuẩn)" data-i18n-ph="sync.charDescPh"></textarea>
+  <div class="row"><button id="chPick" data-i18n="sync.charPickBtn">Chọn ảnh (1–2 ảnh rõ mặt)</button><button id="chAuto" title="Muse nhìn ảnh và viết mô tả ngoại hình cố định" data-i18n="sync.charAutoBtn" data-i18n-title="sync.charAutoTitle">Tự mô tả từ ảnh</button><span id="chImgs" class="hint"></span><span class="grow"></span><button id="chSave" class="primary" data-i18n="sync.charSaveBtn">Lưu nhân vật</button><button id="chCancel" hidden data-i18n="common.cancelEdit">Huỷ sửa</button></div>
+  <div id="chList" class="cards"></div></div>
+ <div class="card pad"><h3 data-i18n="sync.styleTitle">💡 Ý tưởng / Phong cách</h3><p class="hint" data-i18n="sync.styleHint">Khối văn bản bối cảnh, màu sắc, ánh sáng, mood... dùng lại cho nhiều video.</p>
+  <input id="stName" placeholder="Tên (vd: Giáng Sinh ấm áp)" data-i18n-ph="sync.styleNamePh"><textarea id="stText" placeholder="Vd: warm Christmas market at night, golden fairy lights, snowy background, cinematic soft film look" data-i18n-ph="sync.styleTextPh"></textarea>
+  <div class="row"><button id="stAuto" title="Muse viết mô tả phong cách dựa trên tên (và ghi chú bạn đã nhập)" data-i18n="sync.styleAutoBtn" data-i18n-title="sync.styleAutoTitle">Tự mô tả bằng AI</button><span class="grow"></span><button id="stSave" class="primary" data-i18n="common.save">Lưu</button><button id="stCancel" hidden data-i18n="common.cancelEdit">Huỷ sửa</button></div>
+  <div id="stList" class="cards"></div></div></div></section>
+
+<section id="v-accounts" class="view"><div class="pagehead"><h1 data-i18n="accounts.title">Tài khoản Muse</h1><p data-i18n="accounts.sub">Mỗi tài khoản render 1 video một lúc. Thêm nhiều tài khoản để chạy song song và tự chuyển khi hết hạn mức.</p></div><div class="card pad">
+ <h3 data-i18n="accounts.otpTitle">Thêm tài khoản Muse</h3><p class="hint" data-i18n="accounts.otpHint">Đăng nhập bằng mã OTP gửi về email/số điện thoại của tài khoản Muse (không cần mật khẩu, không qua dịch vụ trả phí). Phiên đăng nhập chỉ lưu trên máy bạn. Đây là giao thức nội bộ không chính thức của Muse nên có thể hỏng khi Muse đổi hệ thống; nên dùng tài khoản phụ.</p>
+ <div class="row"><input id="acEmail" placeholder="Email Muse" data-i18n-ph="accounts.emailPh" class="grow"><button id="acSend" data-i18n="accounts.sendOtp">Gửi mã OTP</button><input id="acOtp" placeholder="Mã OTP" data-i18n-ph="accounts.otpPh" style="width:120px"><button id="acAdd" class="primary" data-i18n="accounts.confirmAdd">Xác nhận &amp; thêm</button></div></div>
+ <div class="card pad"><h3 data-i18n="accounts.cookieTitle">Hoặc nhập cookie từ trình duyệt</h3><p class="hint" data-i18n="accounts.cookieHint">Dùng khi bạn đăng nhập muse.ai bằng mật khẩu hoặc 2FA: đăng nhập trên Chrome, xuất cookie của muse.ai (extension Cookie-Editor → Export → JSON, hoặc file cookies.txt) rồi dán vào đây. Cookie có giá trị như mật khẩu: không gửi cho ai. Phiên hết hạn thì nhập lại.</p>
+ <div class="row"><input id="ckEmail" placeholder="Email Muse (để đặt tên tài khoản)" data-i18n-ph="accounts.cookieEmailPh" class="grow"><button id="ckAdd" class="primary" data-i18n="accounts.cookieAdd">Nhập cookie</button></div><textarea id="ckText" rows="4" placeholder="Dán JSON hoặc nội dung cookies.txt" data-i18n-ph="accounts.cookieTextPh" style="width:100%;margin-top:8px"></textarea></div>
+ <div class="card pad"><div class="row"><h3 class="grow" data-i18n="accounts.listTitle">Danh sách tài khoản</h3><button id="acCheckAll" class="primary" data-i18n="accounts.checkAll">Kiểm tra tất cả</button><button id="acResetAll" class="ghost" data-i18n="accounts.resetAll">Đặt lại tất cả</button><button id="acRefresh" class="ghost" data-i18n="accounts.checkBridge">Kiểm tra bridge</button></div>
+ <p class="hint" data-i18n="accounts.listHint">Khi một tài khoản hết hạn mức tuần (412), bị chặn (596) hoặc lỗi liên tục, app tự chuyển cảnh đó sang tài khoản khác và làm tiếp.</p><div id="acList"></div></div></section>
+
+<section id="v-studio" class="view"><div class="pagehead"><h1 data-i18n="studio.title">Studio kênh</h1><p data-i18n="studio.sub">Một yêu cầu → kịch bản → render → giọng/phụ đề → kiểm tra → thư mục tập. Làm hàng loạt theo mục tiêu mỗi ngày.</p></div>
+ <div class="card pad" id="stuToday"><div class="row"><h3 class="grow"><span data-i18n="studio.todayTitle">Hôm nay</span> <small id="stuTodayCh"></small></h3><select id="stuCh0" style="max-width:260px"></select></div>
+  <div id="stuProg" class="prog"></div><div class="bar" style="height:8px"><i id="stuBar" style="width:0"></i></div>
+  <div class="row" style="margin-top:10px"><button id="stuContinue" class="primary big" data-i18n="studio.continueBtn">▶ Làm tiếp hôm nay</button><span class="hint grow" id="stuContHint"></span></div>
+  <details style="margin-top:8px"><summary data-i18n="studio.moreSummary">Tạo thêm / nhập ý tưởng riêng</summary>
+   <div class="row" style="margin-top:6px"><label class="inl"><span data-i18n="studio.moreCountLabel">Số tập tạo thêm</span> <input id="stuCount" type="number" min="1" max="30" value="3" style="width:70px"></label><button id="stuMore" data-i18n="studio.moreBtn">Tạo thêm (AI tự nghĩ ý tưởng)</button></div>
+   <textarea id="stuIdeas" rows="3" placeholder="Hoặc gõ ý tưởng của bạn, mỗi dòng 1 tập (để trống thì AI tự nghĩ):&#10;Bắp lén ăn bánh trước bữa cơm&#10;Bắp đi chợ cùng mẹ" data-i18n-ph="studio.ideasPh" style="margin-top:6px"></textarea>
+   <div class="row" style="margin-top:6px"><button id="stuFromIdeas" data-i18n="studio.fromIdeasBtn">Tạo các tập từ danh sách trên</button></div></details></div>
+ <div class="card pad"><h3 data-i18n="studio.newEpTitle">Sản xuất tập mới</h3>
+  <p class="hint" data-i18n="studio.newEpHint">Chỉ cần một yêu cầu tự nhiên. App tự lập kịch bản, chia cảnh, render, thêm giọng/phụ đề, kiểm tra và xuất thư mục tập. Nhân vật lấy từ mục Đồng bộ (Character Bible), tài khoản ở mục Tài khoản.</p>
+  <div class="row"><select id="stuCh" style="max-width:260px"></select><button id="stuNewCh" data-i18n="studio.newChBtn">+ Kênh mới</button><span class="grow"></span></div>
+  <textarea id="stuReq" rows="3" placeholder="VD: Gia đình nhà Bắp — tạo tập mới về Bắp lén ăn bánh trước bữa cơm." data-i18n-ph="studio.reqPh" style="margin-top:8px"></textarea>
+  <div class="row" style="margin-top:8px"><span class="hint grow" id="stuHint"></span><button id="stuGo" class="primary" data-i18n="studio.goBtn">Sản xuất tập mới</button></div></div>
+ <div class="card pad"><div class="row"><h3 class="grow" data-i18n="studio.epsTitle">Các tập</h3><div class="filters" id="stuFilters"></div></div><div id="stuEps"></div></div>
+ <div class="card pad" id="stuForm"><h3 id="stuFormT" data-i18n="studio.form.title">Cấu hình kênh</h3>
+  <div class="grid2">
+   <label><span data-i18n="studio.form.name">Tên kênh</span><input id="stuChName" placeholder="Gia đình nhà Bắp" data-i18n-ph="studio.form.namePh"></label>
+   <label><span data-i18n="studio.form.style">Phong cách hình ảnh cố định</span><input id="chStyle" placeholder="3D Pixar-style, warm cozy home lighting" data-i18n-ph="studio.form.stylePh"></label>
+   <label><span data-i18n="studio.form.ratio">Tỷ lệ</span><select id="chRatio"><option>9:16</option><option>16:9</option><option>1:1</option><option>3:4</option></select></label>
+   <label><span data-i18n="studio.form.dur">Thời lượng mục tiêu (giây, 10–60)</span><input id="chDur" type="number" min="10" max="60" value="30"></label>
+   <label><span data-i18n="studio.form.lang">Ngôn ngữ</span><select id="chLang"><option value="vi">Tiếng Việt</option><option value="en">English</option><option value="zh">中文</option></select></label>
+   <label><span data-i18n="studio.form.voiceMode">Giọng nói</span><select id="chVoice"><option value="muse" data-i18n="studio.form.voiceMuse">Muse tự đọc lời thoại trong video</option><option value="tts" data-i18n="studio.form.voiceTts">Giọng đọc TTS (edge-tts) trộn vào video</option><option value="none" data-i18n="studio.form.voiceNone">Không lời thoại</option></select></label>
+   <label><span data-i18n="studio.form.ttsDefault">Giọng TTS mặc định (tuỳ chọn)</span><input id="chTts" placeholder="vi-VN-HoaiMyNeural"></label>
+   <label><span data-i18n="studio.form.ttsMap">Giọng theo nhân vật (mỗi dòng Tên=giọng)</span><textarea id="chMap" rows="2" placeholder="Bắp=vi-VN-NamMinhNeural" data-i18n-ph="studio.form.ttsMapPh"></textarea></label>
+   <label><span data-i18n="studio.form.dailyTarget">Số video mỗi ngày (mục tiêu)</span><input id="chDaily" type="number" min="1" max="50" value="10"></label>
+   <label><span data-i18n="studio.form.ideaSeeds">Hướng nội dung / chủ đề (mỗi dòng 1 ý, AI dựa vào đây để nghĩ tập mới)</span><textarea id="chSeeds" rows="2" placeholder="Bắp nghịch ngợm trong nhà&#10;Bắp và mẹ nấu ăn&#10;Bắp đi chơi cuối tuần" data-i18n-ph="studio.form.ideaSeedsPh"></textarea></label>
+   <label class="wide"><span data-i18n="studio.form.avoid">Điều cần tránh thêm (tuỳ chọn)</span><input id="chAvoid" placeholder="cảnh bạo lực, nhân vật nhìn thẳng ống kính" data-i18n-ph="studio.form.avoidPh"></label>
+  </div>
+  <div class="picks" id="chChars" style="margin:8px 0"></div>
+  <div class="row"><label class="inl"><input type="checkbox" id="chSub" checked> <span data-i18n="studio.form.subtitles">Tạo phụ đề .srt</span></label><label class="inl"><input type="checkbox" id="chCont" checked> <span data-i18n="studio.form.continuity">Nối liền mạch giữa các cảnh</span></label>
+   <button id="chMusic" data-i18n="studio.form.music">Nhạc nền</button><small id="chMusicName"></small><span class="grow"></span><button id="chDel" class="dangero" hidden data-i18n="studio.form.delBtn">Xoá kênh</button><button id="stuChSave" class="primary" data-i18n="studio.form.saveBtn">Lưu kênh</button></div></div>
+</section>
+
+
+<section id="v-film" class="view"><div class="pagehead"><h1 data-i18n="film.title">Làm phim</h1><p data-i18n="film.sub">Từ ý tưởng đến phim nhiều cảnh liền mạch (tối đa 6 phút).</p></div>
+ <div class="card pad"><h3 data-i18n="film.cardTitle">🎥 Làm phim</h3><p class="hint" data-i18n="film.cardHint">Từ một ý tưởng → AI viết kịch bản nhiều cảnh (mỗi cảnh ~10 giây, viết theo từng đợt để cốt truyện liền mạch) → bạn sửa → render và ghép thành một phim. Tối đa 60 cảnh (10 phút).</p>
+  <div class="grid2">
+   <label><span data-i18n="film.nameLabel">Tên phim</span><input id="fTitle" placeholder="vd: Chuyến tàu cuối" data-i18n-ph="film.namePh"></label>
+   <label><span data-i18n="film.genreLabel">Thể loại</span><select id="fGenre" data-custom data-ph="vd: kinh dị hài, trinh thám noir, võ hiệp" data-i18n-ph="film.genrePh"><option value="drama" data-i18n="film.genres.drama">Tâm lý / cảm xúc</option><option value="action" data-i18n="film.genres.action">Hành động / kịch tính</option><option value="comedy" data-i18n="film.genres.comedy">Hài nhẹ</option><option value="horror" data-i18n="film.genres.horror">Bí ẩn / hồi hộp</option><option value="fantasy" data-i18n="film.genres.fantasy">Giả tưởng phiêu lưu</option><option value="scifi" data-i18n="film.genres.scifi">Khoa học viễn tưởng</option><option value="romance" data-i18n="film.genres.romance">Tình cảm</option><option value="doc" data-i18n="film.genres.doc">Phim tài liệu</option></select></label>
+   <label><span data-i18n="film.modeLabel">Cách giữ nhân vật &amp; cảnh liền mạch</span><select id="fMode"><option value="auto" data-i18n="film.modes.auto">Tự động (khuyên dùng): liền mạch, phim dài tự chia chương chạy song song</option><option value="strict" data-i18n="film.modes.strict">Liền mạch tuyệt đối: tuần tự từng cảnh (chậm nhất)</option><option value="balanced" data-i18n="film.modes.balanced">Nhanh hơn: chia nhóm chạy song song (đứt mạch ở chỗ cắt nhóm)</option><option value="anchor" data-i18n="film.modes.anchor">Bám nhân vật tối đa: không nối khung, chỉ dùng ảnh gốc, chạy nhanh</option></select></label>
+   <label class="wide"><span data-i18n="film.premiseLabel">Ý tưởng / tóm tắt cốt truyện</span><textarea id="fPremise" rows="3" placeholder="vd: Một cô gái trẻ lạc vào ga tàu cũ lúc nửa đêm và gặp người soát vé từ 50 năm trước..." data-i18n-ph="film.premisePh"></textarea></label>
+   <label><span data-i18n="film.durLabel">Thời lượng</span><select id="fDur" data-custom data-ph="vd: 150 giây, 2:30, 4 phút" data-i18n-ph="film.durPh"><option value="30" data-i18n="film.durs.d30">30 giây (3 cảnh)</option><option value="60" selected data-i18n="film.durs.d60">1 phút (6 cảnh)</option><option value="90" data-i18n="film.durs.d90">1 phút 30 (9 cảnh)</option><option value="120" data-i18n="film.durs.d120">2 phút (12 cảnh)</option><option value="180" data-i18n="film.durs.d180">3 phút (18 cảnh)</option><option value="300" data-i18n="film.durs.d300">5 phút (30 cảnh)</option><option value="600" data-i18n="film.durs.d600">10 phút (60 cảnh)</option></select></label>
+   <label><span data-i18n="film.ratioLabel">Tỉ lệ</span><select id="fRatio" data-custom data-ph="vd: 21:9 (chỉ dùng 16:9, 9:16, 1:1, 3:4 được ghép chuẩn)" data-i18n-ph="film.ratioPh"><option>16:9</option><option>9:16</option><option>1:1</option><option>3:4</option></select></label>
+   <label><span data-i18n="film.voiceLabel">Ngôn ngữ lời thoại</span><select id="fVoice" data-custom data-ph="vd: Tiếng Thái, Italian" data-i18n-ph="film.voicePh"><option value="none" data-i18n="voice.none">Không lời thoại</option><option value="vi" data-i18n="voice.vi">Tiếng Việt</option><option value="en" data-i18n="voice.en">Tiếng Anh</option><option value="ja" data-i18n="voice.ja">Tiếng Nhật</option><option value="ko" data-i18n="voice.ko">Tiếng Hàn</option><option value="zh" data-i18n="voice.zh">Tiếng Trung</option><option value="th" data-i18n="voice.th">Tiếng Thái</option><option value="fr" data-i18n="voice.fr">Tiếng Pháp</option><option value="es" data-i18n="voice.es">Tiếng Tây Ban Nha</option></select></label>
+   <label><span data-i18n="film.styleLabel">Phong cách / ý tưởng</span><select id="fStyle"></select></label>
+  </div>
+  <div class="wide" style="margin-top:8px"><small data-i18n="film.charsHint">Nhân vật (đồng bộ ngoại hình):</small><div id="fChars" class="picks"></div></div>
+  <label class="wide" style="margin-top:8px"><span data-i18n="film.bibleLabel">Bible phim (cố định xuyên suốt: phong cách quay, bối cảnh, trang phục nhân vật; AI tự điền khi viết kịch bản, bạn sửa được và nó được chèn vào MỌI cảnh)</span><textarea id="fBible" rows="3" placeholder="Bấm Viết kịch bản bằng AI để tự tạo, hoặc tự viết. Vd: Look: 35mm film, teal-orange grade. Locations: old train station at night... Fixed outfits: Lan: red wool coat, black bob hair..." data-i18n-ph="film.biblePh"></textarea></label>
+  <div class="row" style="margin-top:8px"><label class="inl"><input type="checkbox" id="fMusicOn"> <span data-i18n="film.musicLabel">Nhạc nền</span> <button id="fMusic" type="button" data-i18n="common.pick">Chọn</button> <small id="fMusicName"></small></label><span class="grow"></span><button id="fPlan" data-i18n="film.planBtn">✍️ Viết kịch bản bằng AI</button></div></div>
+ <div class="card pad"><div class="row"><h3 class="grow" data-i18n="film.scriptTitle">Kịch bản (sửa được, mỗi dòng 1 cảnh)</h3><small id="fCount"></small></div>
+  <textarea id="fScript" rows="10" placeholder="Bấm &quot;Viết kịch bản bằng AI&quot; hoặc tự dán theo dạng:&#10;0-10s: ...&#10;10-20s: ..." data-i18n-ph="film.scriptPh"></textarea>
+  <div class="row" style="margin-top:8px"><span class="hint grow" data-i18n="film.scriptHint">Phim được thêm vào hàng đợi chung và dùng các tài khoản Muse như mục Kịch bản.</span><button id="fGo" class="primary big" data-i18n="film.goBtn">🎬 Render phim</button></div></div>
+ <div class="card pad"><h3 data-i18n="film.listTitle">Phim của bạn</h3><div id="fList"></div></div>
+</section>
+
+<section id="v-aff" class="view"><div class="pagehead"><h1 data-i18n="aff.title">Video Aff</h1><p data-i18n="aff.sub">Ảnh sản phẩm → kịch bản bán hàng, caption, hashtag và bình luận ghim → video.</p></div>
+ <div class="card pad"><h3 data-i18n="aff.cardTitle">🛍️ Video Aff</h3><p class="hint" data-i18n="aff.cardHint">Nhập sản phẩm + ảnh → AI viết kịch bản bán hàng theo công thức, kèm caption, hashtag và bình luận ghim → render video. App không bịa giá/khuyến mãi: chỉ dùng thông tin bạn nhập. App không tự đăng bài.</p>
+  <div class="grid2">
+   <label><span data-i18n="aff.productLabel">Tên sản phẩm</span><input id="aProduct" placeholder="vd: Máy xay mini cầm tay" data-i18n-ph="aff.productPh"></label>
+   <label><span data-i18n="aff.priceLabel">Giá / ưu đãi (tuỳ chọn)</span><input id="aPrice" placeholder="vd: 199k, freeship" data-i18n-ph="aff.pricePh"></label>
+   <label class="wide"><span data-i18n="aff.pointsLabel">Điểm nổi bật (mỗi ý một dòng hoặc cách nhau dấu phẩy)</span><textarea id="aPoints" rows="3" placeholder="Pin 4000mAh, sạc Type-C, xay đá được, rửa dễ" data-i18n-ph="aff.pointsPh"></textarea></label>
+   <label class="wide"><span data-i18n="aff.descLabel">Mô tả ngoại hình sản phẩm (tuỳ chọn; để trống thì AI tự mô tả từ ảnh rồi chèn vào mọi cảnh để sản phẩm không bị sai)</span><textarea id="aDesc" rows="2" placeholder="vd: matte white cylinder blender, 20cm tall, black lid, blue logo MINIX on the front..." data-i18n-ph="aff.descPh"></textarea></label>
+   <label><span data-i18n="aff.audLabel">Đối tượng khách</span><input id="aAud" placeholder="vd: dân văn phòng, mẹ bỉm sữa" data-i18n-ph="aff.audPh"></label>
+   <label><span data-i18n="aff.linkLabel">Link affiliate (đưa vào bài đăng)</span><input id="aLink" placeholder="https://..."></label>
+   <label><span data-i18n="aff.platLabel">Nền tảng</span><select id="aPlat" data-custom data-ph="vd: YouTube Shorts, Lazada Video" data-i18n-ph="aff.platPh"><option value="tiktok" data-i18n="aff.plats.tiktok">TikTok</option><option value="shopee" data-i18n="aff.plats.shopee">Shopee Video</option><option value="reels" data-i18n="aff.plats.reels">Facebook / Instagram Reels</option></select></label>
+   <label><span data-i18n="aff.formLabel">Công thức</span><select id="aForm" data-custom data-ph="vd: so sánh với sản phẩm cũ, ASMR đóng gói, kể chuyện khách hàng" data-i18n-ph="aff.formPh"><option value="review" data-i18n="aff.forms.review">Review chân thực</option><option value="problem" data-i18n="aff.forms.problem">Vấn đề → giải pháp</option><option value="unbox" data-i18n="aff.forms.unbox">Unboxing</option><option value="beforeafter" data-i18n="aff.forms.beforeafter">Trước / sau</option><option value="top" data-i18n="aff.forms.top">3 lý do nên mua</option></select></label>
+   <label><span data-i18n="aff.durLabel">Thời lượng</span><select id="aDur" data-custom data-ph="vd: 45 giây, 1 phút 30" data-i18n-ph="aff.durPh"><option value="10" data-i18n="common.sec10">10 giây</option><option value="20" data-i18n="common.sec20">20 giây</option><option value="30" selected data-i18n="common.sec30">30 giây</option><option value="40" data-i18n="common.sec40">40 giây</option><option value="60" data-i18n="common.sec60">60 giây</option></select></label>
+   <label><span data-i18n="aff.copiesLabel">Số biến thể (mỗi bản hook khác nhau)</span><input id="aCopies" type="number" min="1" max="5" value="1"></label>
+   <label><span data-i18n="aff.voiceLabel">Ngôn ngữ lời thoại</span><select id="aVoice" data-custom data-ph="vd: Tiếng Thái, Indonesian" data-i18n-ph="aff.voicePh"><option value="vi" data-i18n="voice.vi">Tiếng Việt</option><option value="en" data-i18n="voice.en">Tiếng Anh</option><option value="none" data-i18n="voice.none">Không lời thoại</option><option value="ja" data-i18n="voice.ja">Tiếng Nhật</option><option value="ko" data-i18n="voice.ko">Tiếng Hàn</option><option value="zh" data-i18n="voice.zh">Tiếng Trung</option><option value="th" data-i18n="voice.th">Tiếng Thái</option></select></label>
+   <label><span data-i18n="aff.ratioLabel">Tỉ lệ</span><select id="aRatio" data-custom data-ph="vd: 4:5" data-i18n-ph="aff.ratioPh"><option>9:16</option><option>1:1</option><option>3:4</option><option>16:9</option></select></label>
+  </div>
+  <div class="refbox" style="margin-top:8px"><div class="grow"><b id="aImgCount" data-i18n="common.zeroImages">0 ảnh</b><br><small data-i18n="aff.refHint">Chọn 1–4 ảnh sản phẩm rõ nét, nhiều góc (AI nhìn tất cả để mô tả và viết kịch bản).</small></div><button id="aPick" data-i18n="common.pickImages">Chọn ảnh</button><button id="aClear" class="dangero" data-i18n="common.clearImages">Bỏ hết</button></div><div id="aThumbs" class="thumbs"></div>
+  <div class="row" style="margin-top:8px"><label class="inl" title="Các cảnh Aff luôn chạy tuần tự trong cùng một phiên chat Muse để giữ cùng người/địa điểm/ánh sáng/sản phẩm. Bật thêm mục này thì cảnh sau còn lấy ảnh khung cuối cảnh trước làm tham chiếu: liền mạch hơn nhưng sản phẩm dễ trôi khỏi ảnh gốc" data-i18n-title="aff.contTitle"><input type="checkbox" id="aCont"> <span data-i18n="aff.contLabel">Nối thêm ảnh khung cuối (dễ làm lệch sản phẩm, mặc định tắt)</span></label><span class="grow"></span><button id="aGo" class="primary big" data-i18n="aff.goBtn">🛍️ Tạo video Aff</button></div></div>
+ <div class="card pad"><h3 data-i18n="aff.listTitle">Video Aff đã tạo</h3><div id="aList"></div></div>
+</section>
+
+<section id="v-codex" class="view"><div class="pagehead"><h1 data-i18n="codex.title">Trợ lý AI</h1><p data-i18n="codex.sub">Hỏi đáp, viết kịch bản, tối ưu prompt, nghĩ ý tưởng và caption qua tài khoản Muse.</p></div>
+ <div class="card pad codex"><div class="row"><h3 class="grow" data-i18n="codex.cardTitle">🤖 Codex AI</h3><button id="cxClear" class="dangero" data-i18n="codex.clearBtn">Xoá hội thoại</button></div>
+  <p class="hint" data-i18n="codex.hint">Trợ lý chat chạy qua chính các tài khoản Muse của bạn (mỗi câu hỏi tốn một lượt chat). Chọn chế độ rồi hỏi; kết quả có thể sao chép hoặc gửi thẳng sang mục Kịch bản / Làm phim.</p>
+  <div class="filters" id="cxPresets"></div>
+  <div id="cxLog" class="cxlog"></div>
+  <textarea id="cxIn" rows="3" placeholder="Nhập câu hỏi... (Ctrl+Enter để gửi)" data-i18n-ph="codex.inputPh"></textarea>
+  <div class="row" style="margin-top:6px"><span class="hint grow" id="cxHint"></span><button id="cxSend" class="primary" data-i18n="codex.sendBtn">Gửi</button></div></div>
+</section>
+
+
+<section id="v-guide" class="view"><div class="pagehead"><h1 data-i18n="guide.title">Hướng dẫn sử dụng</h1><p data-i18n="guide.sub">Đọc 5 phút là dùng được. Dùng mục lục bên trái để nhảy tới phần cần xem.</p></div>
+<div class="guide">
+<nav class="toc"><a href="#g1" data-i18n="guide.toc1">1. Bắt đầu nhanh</a><a href="#g2" data-i18n="guide.toc2">2. Viết kịch bản</a><a href="#g3" data-i18n="guide.toc3">3. Các chế độ tạo video</a><a href="#g4" data-i18n="guide.toc4">4. Nhân vật &amp; phong cách</a><a href="#g5" data-i18n="guide.toc5">5. Hàng đợi &amp; sửa cảnh</a><a href="#g6" data-i18n="guide.toc6">6. Chạy song song</a><a href="#g7" data-i18n="guide.toc7">7. App tự xử lý lỗi</a><a href="#g8" data-i18n="guide.toc8">8. Tiết kiệm hạn mức</a><a href="#g9" data-i18n="guide.toc9">9. Xử lý sự cố</a><a href="#g10" data-i18n="guide.toc10">10. Phím tắt</a></nav>
+<div class="gbody">
+<section class="card" id="g1" data-i18n-html="guide.g1"><h2>1. Bắt đầu nhanh</h2>
+<ol><li><b>Kích hoạt key</b> (màn hình khoá hiện ra lần đầu mở app).</li>
+<li>Vào <b>Tài khoản</b> → nhập email Muse → <b>Gửi mã OTP</b> → nhập mã → <b>Xác nhận &amp; thêm</b>. Nếu bạn đăng nhập Muse bằng mật khẩu/2FA, dùng khung <b>nhập cookie</b>.</li>
+<li>Vào <b>Cài đặt</b> → <b>Kiểm tra bridge Python</b> để chắc chắn bộ cầu nối chạy được.</li>
+<li>(Tuỳ chọn) Vào <b>Nhân vật &amp; phong cách</b> để lưu nhân vật có ảnh tham chiếu.</li>
+<li><b>Cách nhanh nhất:</b> ở <b>Trang chủ</b>, gõ ý tưởng vào khung <b>⚡ Tạo nhanh</b> và bấm một nút. Hoặc vào <b>Kịch bản</b> để tự viết từng cảnh, bấm <b>Đưa vào hàng đợi</b> (mặc định tự bắt đầu render). Video xong nằm trong <b>Kho video</b> và thư mục lưu.</li></ol>
+<div class="callout">Nên dùng <b>tài khoản phụ</b>. Kết nối với Muse là giao thức không chính thức, có thể thay đổi khi Muse cập nhật.</div></section>
+
+<section class="card" id="g2" data-i18n-html="guide.g2"><h2>2. Viết kịch bản</h2>
+<p>Mỗi <b>dòng = một cảnh</b>, mỗi cảnh dài khoảng <b>10 giây</b>. Tiền tố thời gian như <code>0-10s:</code> được tự bỏ. Viết bằng tiếng Anh cho chủ thể, hành động, góc máy, ánh sáng sẽ cho kết quả ổn định nhất; lời thoại có thể để tiếng Việt.</p>
+<pre>0-10s: A young Vietnamese woman opens a gift box in a cozy warehouse, warm fairy lights, slow push-in
+10-20s: The whole family gathers around the table, laughing, handheld camera
+20-30s: Close-up of the product on the table, steam rising, soft golden light</pre>
+<p><b>Nhiều nhân vật:</b> ghi tên trong ngoặc vuông ở đầu dòng để chỉ rõ ai có mặt, app chỉ gửi đúng ảnh của họ:</p>
+<pre>[Bắp, Mẹ] Bắp chạy vào bếp, Mẹ quay lại mỉm cười
+[-] Cảnh toàn thành phố lúc hoàng hôn, không có nhân vật nào</pre>
+<p>Không ghi thẻ thì app tự nhận theo tên xuất hiện trong câu. Nút <b>Chèn mẫu</b> dưới ô kịch bản giúp bạn bắt đầu nhanh.</p>
+<div class="callout">Mẹo: cảnh sau nên nối tiếp cảnh trước (cùng địa điểm, cùng trang phục). Bật <b>Nối liền mạch</b> để app lấy khung cuối của cảnh trước làm tham chiếu.</div></section>
+
+<section class="card" id="g3" data-i18n-html="guide.g3"><h2>3. Các chế độ tạo video</h2>
+<table><tr><td>Kịch bản</td><td>Bạn viết cảnh. Thiếu cảnh so với thời lượng chọn thì Muse tự viết thêm (nếu bật "Dùng Muse viết/chia cảnh").</td></tr>
+<tr><td>Từ ảnh</td><td>Mỗi ảnh sản phẩm ra một video riêng. Để trống kịch bản để AI tự nghĩ.</td></tr>
+<tr><td>Studio kênh</td><td>Tạo kênh (phong cách, nhân vật, giọng, phụ đề) rồi bấm <b>Làm tiếp hôm nay</b> để đủ mục tiêu mỗi ngày. Mỗi tập được kiểm tra chất lượng và xuất thư mục gồm video, kịch bản, phụ đề, thumbnail, metadata.</td></tr>
+<tr><td>Làm phim</td><td>Nhập ý tưởng → AI lập "bible phim" (phong cách, bối cảnh, trang phục cố định) rồi viết kịch bản theo từng đợt → bạn sửa → render. Tối đa 60 cảnh (10 phút).</td></tr>
+<tr><td>Video Aff</td><td>Nhập sản phẩm, ảnh, điểm nổi bật → AI viết kịch bản bán hàng + caption + hashtag + bình luận ghim. App không bịa giá và không tự đăng bài.</td></tr>
+<tr><td>Trợ lý AI</td><td>Chat để viết kịch bản, tối ưu prompt, nghĩ ý tưởng, caption. Kết quả gửi thẳng sang Kịch bản hoặc Làm phim.</td></tr></table></section>
+
+<section class="card" id="g4" data-i18n-html="guide.g4"><h2>4. Nhân vật &amp; phong cách</h2>
+<ul><li><b>Nhân vật:</b> tên + mô tả cố định (tuổi, mặt, tóc, trang phục) + 1–2 ảnh rõ mặt. Chọn nhân vật ở ô "Nhân vật" khi tạo video.</li>
+<li><b>Phong cách:</b> khối chữ về bối cảnh, màu, ánh sáng, mood. Dùng lại cho nhiều video.</li>
+<li>Sửa ảnh/mô tả nhân vật có hiệu lực cho các cảnh <b>chưa render</b>.</li></ul></section>
+
+<section class="card" id="g5" data-i18n-html="guide.g5"><h2>5. Hàng đợi &amp; sửa cảnh</h2>
+<ul><li>Bấm một video trong hàng đợi để xem và chỉnh từng cảnh ở khung bên phải.</li>
+<li><b>↻ Tạo lại</b>: render lại riêng một cảnh, các cảnh khác giữ nguyên, video tự ghép lại.</li>
+<li><b>✎ Sửa</b>: đổi nội dung cảnh rồi tạo lại ngay (dùng khi Muse từ chối mãi).</li>
+<li><b>⏭ Bỏ qua</b>: bỏ hẳn cảnh không ra được, video ghép từ các cảnh còn lại.</li>
+<li><b>Thử lại tất cả lỗi</b> ở thanh dưới để chạy lại mọi video đang lỗi cùng lúc.</li>
+<li>Bấm <b>Dừng</b> bất cứ lúc nào; tiến độ được lưu, mở app lại bấm <b>Chạy tiếp</b>.</li></ul></section>
+
+<section class="card" id="g6" data-i18n-html="guide.g6"><h2>6. Chạy song song nhiều tài khoản</h2>
+<p>Mỗi tài khoản Muse render <b>1 clip một lúc</b>, nên <b>N tài khoản = tối đa N clip cùng lúc</b>. Bảng <b>Luồng tài khoản</b> trên Trang chủ cho thấy từng tài khoản đang làm cảnh nào.</p>
+<p>Cảnh "nối liền mạch" phải đợi khung cuối của cảnh trước, nên một video dài nếu chạy tuần tự chỉ dùng được 1 tài khoản. Vì vậy app có 3 chế độ (chọn mặc định trong <b>Cài đặt</b>, hoặc riêng từng lô ở <b>Tuỳ chọn nâng cao</b>):</p>
+<table><tr><td>Thông minh</td><td>Khuyên dùng. Chia các cảnh của video thành nhiều nhóm; trong nhóm vẫn nối liền mạch, các nhóm chạy song song. Ví dụ 1 video 6 cảnh + 3 tài khoản → 3 nhóm × 2 cảnh. Có nhiều video thì mỗi video chạy 1 nhóm vì tài khoản đã đủ việc.</td></tr>
+<tr><td>Liền mạch tuyệt đối</td><td>Mọi cảnh nối khung với cảnh trước, chạy tuần tự. Mượt nhất nhưng chậm nhất khi chỉ có ít video.</td></tr>
+<tr><td>Nhanh nhất</td><td>Mọi cảnh chạy cùng lúc, không nối khung. Giữ nhân vật bằng ảnh tham chiếu, chỗ nối giữa các cảnh có thể không liền.</td></tr></table>
+<ul><li>Khi một tài khoản hết hạn mức, bị chặn hoặc lỗi liên tục, cảnh đang làm được <b>tự chuyển sang tài khoản khác</b>, tài khoản đó nghỉ rồi tự quay lại.</li>
+<li>App khởi động các cảnh so le (không dội cùng lúc) và tự dàn đều công việc giữa các tài khoản.</li>
+<li>Sau vài cảnh đầu, app đo thời gian thật và hiển thị <b>"còn ~X phút"</b> ở thanh dưới và Trang chủ.</li>
+<li>Nút <b>Kiểm tra tất cả</b> ở mục Tài khoản kiểm tra phiên đăng nhập từng tài khoản trước khi chạy lô lớn (không tốn hạn mức tạo video).</li></ul></section>
+<section class="card" id="g7" data-i18n-html="guide.g7"><h2>7. App tự xử lý lỗi</h2>
+<table><tr><th>Mã</th><th>Ý nghĩa</th><th>App làm gì</th></tr>
+<tr><td>412</td><td>Hết hạn mức tuần</td><td>Cho tài khoản nghỉ 2 giờ, chuyển cảnh sang tài khoản khác.</td></tr>
+<tr><td>596 / 404</td><td>Phiên đăng nhập hỏng / bị chặn</td><td>Đánh dấu "Bị chặn", chuyển tài khoản khác. Bạn cần đăng nhập lại tài khoản đó.</td></tr>
+<tr><td>429</td><td>Tài khoản đang bận</td><td>Chờ 30 giây rồi thử lại.</td></tr>
+<tr><td>400 / 422</td><td>Muse từ chối nội dung</td><td>Leo "thang làm nhẹ" (xem dưới), không phạt tài khoản.</td></tr>
+<tr><td>502–504</td><td>Lỗi tạm / quá thời gian</td><td>Thử lại; lỗi liên tục thì cho tài khoản nghỉ 5 → 20 → 60 phút. Video lỗi tạm tự chạy tiếp sau ~10 phút (tối đa 3 lần) nếu để app mở.</td></tr></table>
+<p><b>Thang làm nhẹ khi Muse từ chối một cảnh:</b> mức 0 nguyên bản → 1 thay từ nhạy cảm + câu dặn an toàn → 2 nhờ Muse viết lại (bỏ tên người thật, bạo lực chỉ gợi ý) → 3 cảnh "cắt cảnh" không thấy mặt. Hết 3 mức vẫn bị từ chối thì app dừng cảnh đó để bạn <b>Sửa</b> hoặc <b>Bỏ qua</b>.</p>
+<div class="callout warn">Tránh dùng tên người thật (lịch sử hoặc đang sống), cảnh bạo lực, bắt giữ, vũ khí chĩa vào người: đây là lý do phổ biến nhất khiến Muse từ chối.</div></section>
+
+<section class="card" id="g8" data-i18n-html="guide.g8"><h2>8. Tiết kiệm hạn mức</h2>
+<ul><li>Số cảnh chạy cùng lúc thực tế = <b>số tài khoản sẵn sàng</b> (mỗi tài khoản 1 video một lúc). Mặc định "Số cảnh chạy song song" = 0 nghĩa là tự động dùng hết các tài khoản; đặt số khác để giới hạn.</li>
+<li>Mỗi cảnh ≈ 1 clip Muse; mỗi lần Muse viết kịch bản, chia cảnh hay chat với Trợ lý AI cũng tốn một lượt. Nếu đã có kịch bản sẵn, tắt "Dùng Muse viết/chia cảnh".</li>
+<li>Thử một video ngắn (10–20 giây) trước khi chạy hàng loạt; kiểm tra nhân vật ổn rồi mới tăng "Số bản / video".</li>
+<li>Xem thanh ước tính dưới nút "Đưa vào hàng đợi" để biết lô này tốn bao nhiêu clip.</li></ul></section>
+
+<section class="card" id="g9" data-i18n-html="guide.g9"><h2>9. Xử lý sự cố</h2>
+<details><summary>"Chưa thấy bridge Python"</summary><p>Chạy bằng mã nguồn: chạy <code>CAI-DAT-VA-CHAY.bat</code>. Dùng file exe: build lại bằng <code>TAO-FILE-EXE.bat</code> (cần Internet lần đầu để nhúng Python).</p></details>
+<details><summary>Gửi OTP không được / phiên hết hạn</summary><p>Thử nhập cookie từ trình duyệt (Cookie-Editor → Export JSON). Phiên hết hạn thì đăng nhập lại; tài khoản hiện "Bị chặn".</p></details>
+<details><summary>Tất cả tài khoản hết hạn mức</summary><p>Thêm tài khoản khác hoặc đợi tài khoản nghỉ xong. Có thể bấm <b>Đặt lại</b> ở mục Tài khoản nếu bạn chắc hạn mức đã làm mới.</p></details>
+<details><summary>Nhân vật bị lệch ngoại hình giữa các cảnh</summary><p>Thêm ảnh tham chiếu rõ mặt, viết mô tả cố định chi tiết, bật Nối liền mạch, và dùng thẻ <code>[Tên]</code> để chỉ rõ ai có mặt trong từng cảnh.</p></details>
+<details><summary>Ghép video lỗi</summary><p>Mở thư mục video, kiểm tra file scene_N.mp4 có phát được không. Dùng ↻ Tạo lại cho cảnh hỏng rồi để app ghép lại.</p></details></section>
+
+<section class="card" id="g10" data-i18n-html="guide.g10"><h2>10. Phím tắt</h2>
+<table><tr><td>Ctrl + Enter</td><td>Đưa kịch bản vào hàng đợi (ở ô kịch bản) · Gửi tin (ở Trợ lý AI)</td></tr>
+<tr><td>Ctrl + 1…9</td><td>Chuyển nhanh giữa các mục theo thứ tự thanh bên</td></tr>
+<tr><td>Ctrl + Enter (Trang chủ)</td><td>Tạo &amp; render ngay ở khung Tạo nhanh</td></tr>
+<tr><td>F12</td><td>Mở công cụ nhà phát triển (chỉ khi chạy bằng npm start)</td></tr></table></section>
+</div></div></section>
+<section id="v-settings" class="view"><div class="pagehead"><h1 data-i18n="settings.title">Cài đặt</h1><p data-i18n="settings.sub">Thư mục lưu, số cảnh chạy song song, số lần thử lại, thông báo.</p></div><div class="card pad narrow">
+ <h3 data-i18n="settings.connTitle">Kết nối</h3>
+  <small data-i18n="settings.connHint">Kịch bản và ý tưởng do chính Muse viết qua các tài khoản ở mục Tài khoản — không cần khoá API nào khác.</small>
+ <label><span data-i18n="settings.outDirLabel">Thư mục lưu video</span><div class="row"><input id="sDir" class="grow"><button id="sPickDir" data-i18n="common.pick">Chọn</button></div></label>
+ <div class="row"><label class="grow" title="Muse khuyên bộ ảnh gọn (vd 1 ảnh nhân vật + 1 ảnh sản phẩm); càng nhiều ảnh vai trò càng dễ lẫn. Muse nhìn ảnh theo thứ tự đính kèm; quá nhiều ảnh thì ảnh sau bị bỏ qua. Khi vượt giới hạn app bỏ khung cuối trước, rồi ảnh nhân vật/sản phẩm thừa." data-i18n-title="settings.maxRefsTitle"><span data-i18n="settings.maxRefsLabel">Ảnh tham chiếu tối đa mỗi cảnh (2–9)</span><input id="sRefs" type="number" min="2" max="9"></label><label class="grow"><span data-i18n="settings.concLabel">Số cảnh chạy song song (0 = tự động theo số tài khoản)</span><input id="sConc" type="number" min="0" max="20"></label><label class="grow"><span data-i18n="settings.retryLabel">Số lần thử lại mỗi cảnh</span><input id="sRetry" type="number" min="0" max="10"></label><label class="grow"><span data-i18n="settings.pollLabel">Chu kỳ kiểm tra (giây)</span><input id="sPoll" type="number" min="3" max="60"></label></div>
+ <label><span data-i18n="settings.parLabel">Chế độ chạy song song mặc định</span><select id="sPar"><option value="auto" data-i18n="settings.parAuto">Tự động (khuyên dùng): video ngắn liền mạch tuyệt đối; video dài tự chia chương song song, cắt ở chỗ đổi cảnh</option><option value="strict" data-i18n="settings.parStrict">Liền mạch tuyệt đối: tuần tự từng cảnh, 1 tài khoản/video (chậm với video dài)</option><option value="smart" data-i18n="settings.parSmart">Thông minh: video nào cũng chia nhóm song song (nhanh, nhưng ĐỨT mạch ở chỗ cắt nhóm)</option><option value="fast" data-i18n="settings.parFast">Nhanh nhất: mọi cảnh chạy song song, không nối khung</option></select></label>
+ <div class="row"><label class="grow" title="Muse chỉ trả tối đa 10s/clip nên video dài là nhiều clip ghép lại. Chuyển mờ che chỗ nối; cân màu kéo độ sáng/màu từng clip về mức chung của cả video; cân âm lượng làm tiếng không to nhỏ thất thường. Ghép sẽ lâu hơn vài chục giây." data-i18n-title="settings.fadeTitle"><span data-i18n="settings.fadeLabel">Chuyển cảnh giữa các clip 10s</span><select id="sFade"><option value="0" data-i18n="settings.fade0">Cắt thẳng (nhanh nhất)</option><option value="0.3" data-i18n="settings.fade03">Chuyển mờ 0.3s</option><option value="0.5" data-i18n="settings.fade05">Chuyển mờ 0.5s (khuyên dùng)</option><option value="0.8" data-i18n="settings.fade08">Chuyển mờ 0.8s</option></select></label><label class="inl grow"><input type="checkbox" id="sMatch"> <span data-i18n="settings.matchLabel">Đồng bộ màu, độ sáng và âm lượng giữa các clip khi ghép</span></label></div>
+      <div class="row"><label class="grow" title="Từ số cảnh này trở lên, chế độ Tự động mới chia video thành các chương chạy song song (6 phút = 36 cảnh, 10 phút = 60 cảnh)." data-i18n-title="settings.autoFromTitle"><span data-i18n="settings.autoFromLabel">Video dài từ (cảnh)</span><input type="number" id="sAutoFrom" min="4" max="60" style="width:80px"></label><label class="grow" title="Mỗi chương tối thiểu bấy nhiêu cảnh liên tiếp (chạy liền mạch trong một phiên chat). Càng dài càng ít chỗ cắt, nhưng càng ít luồng song song." data-i18n-title="settings.minChapTitle"><span data-i18n="settings.minChapLabel">Mỗi chương tối thiểu (cảnh)</span><input type="number" id="sMinChap" min="2" max="20" style="width:80px"></label></div>
+      <div class="chk"><label title="Sau mỗi cảnh, app so khung đầu của clip mới với khung cuối clip trước; nếu Muse nhảy sang bối cảnh khác thì tạo lại đúng 1 lần (tốn thêm 1 lượt hạn mức)." data-i18n-title="settings.checkTitle"><input type="checkbox" id="sCheck"> <span data-i18n="settings.checkLabel">Kiểm tra mối nối, tự tạo lại cảnh nhảy bối cảnh</span></label></div>
+      <div class="chk"><label title="Các cảnh nối liền được tạo trong CÙNG MỘT cuộc chat Muse (cùng tài khoản) nên Muse nhớ các prompt và video đã tạo trước đó. Tắt đi thì mỗi cảnh là một chat mới, Muse chỉ thấy ảnh khung cuối + chữ mô tả cảnh trước." data-i18n-title="settings.sessTitle"><input type="checkbox" id="sSess"> <span data-i18n="settings.sessLabel">Nối cảnh trong cùng một phiên chat Muse (giữ ngữ cảnh cảnh trước)</span></label></div>
+ <label class="inl"><input type="checkbox" id="sNotify"> <span data-i18n="settings.notifyLabel">Thông báo trên máy khi có video render xong</span></label>
+ <div class="row"><button id="sSave" class="primary" data-i18n="settings.saveBtn">Lưu cài đặt</button><button id="sTest" data-i18n="settings.testBtn">Kiểm tra bridge Python</button></div></div></section>
+</main>
+<div id="toast"></div>
+<script>window.__errs=[];window.addEventListener("error",e=>__errs.push(e.message+" @"+e.lineno));</script><script src="i18n.js"></script><script src="custom-select.js"></script><script src="app.js"></script><script src="studio.js"></script><script src="tools.js"></script><script src="home.js"></script></body></html>
